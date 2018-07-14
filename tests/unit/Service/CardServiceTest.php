@@ -126,7 +126,7 @@ class CardServiceTest extends TestCase {
         $card->setArchived(true);
         $this->cardMapper->expects($this->once())->method('find')->willReturn($card);
         $this->cardMapper->expects($this->never())->method('update');
-        $this->setExpectedException(StatusException::class);
+        $this->expectException(StatusException::class);
         $this->cardService->update(123, 'newtitle', 234, 'text', 999, 'foo', 'admin', '2017-01-01 00:00:00');
     }
 
@@ -146,7 +146,7 @@ class CardServiceTest extends TestCase {
         $card->setArchived(true);
         $this->cardMapper->expects($this->once())->method('find')->willReturn($card);
         $this->cardMapper->expects($this->never())->method('update');
-        $this->setExpectedException(StatusException::class);
+        $this->expectException(StatusException::class);
         $this->cardService->rename(123, 'newtitle');
     }
 
@@ -186,7 +186,7 @@ class CardServiceTest extends TestCase {
         $card->setArchived(true);
         $this->cardMapper->expects($this->once())->method('findAll')->willReturn([$card]);
         $this->cardMapper->expects($this->never())->method('update')->willReturnCallback(function($c) { return $c; });
-        $this->setExpectedException(StatusException::class);
+        $this->expectException(StatusException::class);
         $actual = $this->cardService->reorder(123, 234, 1);
     }
     public function testArchive() {
@@ -222,7 +222,7 @@ class CardServiceTest extends TestCase {
         $card->setArchived(true);
         $this->cardMapper->expects($this->once())->method('find')->willReturn($card);
         $this->cardMapper->expects($this->never())->method('assignLabel');
-        $this->setExpectedException(StatusException::class);
+        $this->expectException(StatusException::class);
         $this->cardService->assignLabel(123, 999);
     }
 
@@ -238,8 +238,8 @@ class CardServiceTest extends TestCase {
         $card = new Card();
         $card->setArchived(true);
         $this->cardMapper->expects($this->once())->method('find')->willReturn($card);
-        $this->cardMapper->expects($this->never())->method('removeLabel');
-        $this->setExpectedException(StatusException::class);
+        $this->cardMapper->expects($this->never())->method('removeLabel');		
+		$this->expectException(StatusException::class);
         $this->cardService->removeLabel(123, 999);
     }
 
@@ -295,7 +295,10 @@ class CardServiceTest extends TestCase {
 	}
 
 	/**
-	 * @expectedException \OCA\Deck\NotFoundException
+	 * @expectException \OCA\Deck\NotFoundException
+	 * 
+	 * 
+	 * 
 	 */
 	public function testUnassignUserNotExisting() {
 		$assignment = new AssignedUsers();
