@@ -51,6 +51,13 @@ class CardService {
 		$this->attachmentService = $attachmentService;
 	}
 
+	/**
+	 * @param $cardId
+	 * @return \OCA\Deck\Db\RelationalEntity
+	 * @throws \OCA\Deck\NoPermissionException
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 */
 	public function find($cardId) {
 		$this->permissionService->checkPermission($this->cardMapper, $cardId, Acl::PERMISSION_READ);
 		$card = $this->cardMapper->find($cardId);
@@ -62,7 +69,16 @@ class CardService {
 	}
 
 	/**
+	 * @param $title
+	 * @param $stackId
+	 * @param $type
 	 * @param integer $order
+	 * @param $owner
+	 * @return \OCP\AppFramework\Db\Entity
+	 * @throws StatusException
+	 * @throws \OCA\Deck\NoPermissionException
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
 	 */
 	public function create($title, $stackId, $type, $order, $owner) {
 		$this->permissionService->checkPermission($this->stackMapper, $stackId, Acl::PERMISSION_EDIT);
@@ -79,6 +95,14 @@ class CardService {
 
 	}
 
+	/**
+	 * @param $id
+	 * @return \OCP\AppFramework\Db\Entity
+	 * @throws StatusException
+	 * @throws \OCA\Deck\NoPermissionException
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 */
 	public function delete($id) {
 		$this->permissionService->checkPermission($this->cardMapper, $id, Acl::PERMISSION_EDIT);
 		if ($this->boardService->isArchived($this->cardMapper, $id)) {
@@ -87,6 +111,21 @@ class CardService {
 		return $this->cardMapper->delete($this->cardMapper->find($id));
 	}
 
+	/**
+	 * @param $id
+	 * @param $title
+	 * @param $stackId
+	 * @param $type
+	 * @param $order
+	 * @param $description
+	 * @param $owner
+	 * @param $duedate
+	 * @return \OCP\AppFramework\Db\Entity
+	 * @throws StatusException
+	 * @throws \OCA\Deck\NoPermissionException
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 */
 	public function update($id, $title, $stackId, $type, $order, $description, $owner, $duedate) {
 		$this->permissionService->checkPermission($this->cardMapper, $id, Acl::PERMISSION_EDIT);
 		if ($this->boardService->isArchived($this->cardMapper, $id)) {
@@ -106,6 +145,15 @@ class CardService {
 		return $this->cardMapper->update($card);
 	}
 
+	/**
+	 * @param $id
+	 * @param $title
+	 * @return \OCP\AppFramework\Db\Entity
+	 * @throws StatusException
+	 * @throws \OCA\Deck\NoPermissionException
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 */
 	public function rename($id, $title) {
 		$this->permissionService->checkPermission($this->cardMapper, $id, Acl::PERMISSION_EDIT);
 		if ($this->boardService->isArchived($this->cardMapper, $id)) {
@@ -119,6 +167,16 @@ class CardService {
 		return $this->cardMapper->update($card);
 	}
 
+	/**
+	 * @param $id
+	 * @param $stackId
+	 * @param $order
+	 * @return array
+	 * @throws StatusException
+	 * @throws \OCA\Deck\NoPermissionException
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 */
 	public function reorder($id, $stackId, $order) {
 		$this->permissionService->checkPermission($this->cardMapper, $id, Acl::PERMISSION_EDIT);
 		if ($this->boardService->isArchived($this->cardMapper, $id)) {
@@ -150,6 +208,14 @@ class CardService {
 		return $result;
 	}
 
+	/**
+	 * @param $id
+	 * @return \OCP\AppFramework\Db\Entity
+	 * @throws StatusException
+	 * @throws \OCA\Deck\NoPermissionException
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 */
 	public function archive($id) {
 		$this->permissionService->checkPermission($this->cardMapper, $id, Acl::PERMISSION_EDIT);
 		if ($this->boardService->isArchived($this->cardMapper, $id)) {
@@ -160,6 +226,14 @@ class CardService {
 		return $this->cardMapper->update($card);
 	}
 
+	/**
+	 * @param $id
+	 * @return \OCP\AppFramework\Db\Entity
+	 * @throws StatusException
+	 * @throws \OCA\Deck\NoPermissionException
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 */
 	public function unarchive($id) {
 		$this->permissionService->checkPermission($this->cardMapper, $id, Acl::PERMISSION_EDIT);
 		if ($this->boardService->isArchived($this->cardMapper, $id)) {
@@ -170,6 +244,14 @@ class CardService {
 		return $this->cardMapper->update($card);
 	}
 
+	/**
+	 * @param $cardId
+	 * @param $labelId
+	 * @throws StatusException
+	 * @throws \OCA\Deck\NoPermissionException
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 */
 	public function assignLabel($cardId, $labelId) {
 		$this->permissionService->checkPermission($this->cardMapper, $cardId, Acl::PERMISSION_EDIT);
 		if ($this->boardService->isArchived($this->cardMapper, $cardId)) {
@@ -182,6 +264,14 @@ class CardService {
 		$this->cardMapper->assignLabel($cardId, $labelId);
 	}
 
+	/**
+	 * @param $cardId
+	 * @param $labelId
+	 * @throws StatusException
+	 * @throws \OCA\Deck\NoPermissionException
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 */
 	public function removeLabel($cardId, $labelId) {
 		$this->permissionService->checkPermission($this->cardMapper, $cardId, Acl::PERMISSION_EDIT);
 		if ($this->boardService->isArchived($this->cardMapper, $cardId)) {
@@ -194,6 +284,13 @@ class CardService {
 		$this->cardMapper->removeLabel($cardId, $labelId);
 	}
 
+	/**
+	 * @param $cardId
+	 * @param $userId
+	 * @return bool|null|\OCP\AppFramework\Db\Entity
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 */
 	public function assignUser($cardId, $userId) {
 		$assignments = $this->assignedUsersMapper->find($cardId);
 		foreach ($assignments as $assignment) {
@@ -207,6 +304,14 @@ class CardService {
 		return $this->assignedUsersMapper->insert($assignment);
 	}
 
+	/**
+	 * @param $cardId
+	 * @param $userId
+	 * @return \OCP\AppFramework\Db\Entity
+	 * @throws NotFoundException
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 */
 	public function unassignUser($cardId, $userId) {
 		$assignments = $this->assignedUsersMapper->find($cardId);
 		foreach ($assignments as $assignment) {
