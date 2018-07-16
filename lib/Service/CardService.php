@@ -31,7 +31,7 @@ use OCA\Deck\Db\Acl;
 use OCA\Deck\Db\StackMapper;
 use OCA\Deck\NotFoundException;
 use OCA\Deck\StatusException;
-
+use OCA\Deck\BadRequestException;
 
 class CardService {
 
@@ -79,8 +79,30 @@ class CardService {
 	 * @throws \OCA\Deck\NoPermissionException
 	 * @throws \OCP\AppFramework\Db\DoesNotExistException
 	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 * @throws BadrequestException
 	 */
 	public function create($title, $stackId, $type, $order, $owner) {
+
+		if ($title === 'false' || $title === null) {
+			throw new BadRequestException('title must be provided');
+		}
+
+		if (is_numeric($stackId) === false) {
+			throw new BadRequestException('stack id must be a number');
+		}
+
+		if ($type === 'false' || $type === null) {
+			throw new BadRequestException('type must be provided');
+		}
+
+		if (is_numeric($order) === false) {
+			throw new BadRequestException('order must be a number');
+		}
+
+		if ($owner === false || $owner === null) {
+			throw new BadRequestException('owner must be provided');
+		}
+
 		$this->permissionService->checkPermission($this->stackMapper, $stackId, Acl::PERMISSION_EDIT);
 		if ($this->boardService->isArchived($this->stackMapper, $stackId)) {
 			throw new StatusException('Operation not allowed. This board is archived.');
@@ -92,7 +114,6 @@ class CardService {
 		$card->setOrder($order);
 		$card->setOwner($owner);
 		return $this->cardMapper->insert($card);
-
 	}
 
 	/**
@@ -102,8 +123,14 @@ class CardService {
 	 * @throws \OCA\Deck\NoPermissionException
 	 * @throws \OCP\AppFramework\Db\DoesNotExistException
 	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 * @throws BadRequestException
 	 */
 	public function delete($id) {
+
+		if (is_numeric($id) === false) {
+			throw new BadRequestException('card id must be a number');
+		}
+
 		$this->permissionService->checkPermission($this->cardMapper, $id, Acl::PERMISSION_EDIT);
 		if ($this->boardService->isArchived($this->cardMapper, $id)) {
 			throw new StatusException('Operation not allowed. This board is archived.');
@@ -125,8 +152,30 @@ class CardService {
 	 * @throws \OCA\Deck\NoPermissionException
 	 * @throws \OCP\AppFramework\Db\DoesNotExistException
 	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 * @throws BadRequestException
 	 */
-	public function update($id, $title, $stackId, $type, $order, $description, $owner, $duedate) {
+	public function update($id, $title, $stackId, $type, $order = 0, $description = '', $owner, $duedate = null) {
+
+		if (is_numeric($id) === false) {
+			throw new BadRequestException('card id must be a number');			
+		}
+
+		if ($title === false || $title === null) {
+			throw new BadRequestException('title must be provided');
+		}
+
+		if (is_numeric($stackId) === false) {
+			throw new BadRequestException('stack id must be a number $$$');
+		}
+
+		if ($type === false || $type === null) {
+			throw new BadRequestException('type must be provided');
+		}
+
+		if ($owner === false || $owner === null) {
+			throw new BadRequestException('owner must be provided');
+		}
+
 		$this->permissionService->checkPermission($this->cardMapper, $id, Acl::PERMISSION_EDIT);
 		if ($this->boardService->isArchived($this->cardMapper, $id)) {
 			throw new StatusException('Operation not allowed. This board is archived.');
