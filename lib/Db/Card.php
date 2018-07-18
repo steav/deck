@@ -70,6 +70,13 @@ class Card extends RelationalEntity {
 		$this->databaseType = $type;
 	}
 
+	public function setDescription($description) {
+		if (!\OC::$server->getDatabaseConnection()->supports4ByteText()) {
+			$description = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $description);
+		}
+		return parent::setDescription($description);
+	}
+
 	public function getDuedate($isoFormat = false) {
 		if ($this->duedate === null) {
 			return null;
